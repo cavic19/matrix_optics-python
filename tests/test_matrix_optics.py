@@ -2,7 +2,7 @@ import unittest
 import cmath
 from cv2 import exp
 import numpy as np
-from matrixopt.matrix_optics import ABCDElement, FreeSpace, OpticalPath
+from matrixopt.matrix_optics import *
 
 class TestABCDElement(unittest.TestCase):
     A = 1
@@ -79,6 +79,13 @@ class TestOpticalPath(unittest.TestCase):
         op = OpticalPath(d, A_el)
         actual = op.propagate(q_in)
         self.assertAlmostEqual(expected, actual, places=3)
+
+    def test_length(self):
+        op = OpticalPath(5, 10, 1.3, 0.001)
+        self.assertAlmostEquals(16.301, op.length,5)
+
+        op = OpticalPath(1, ThinLens(1), 0.5)
+        self.assertEquals(1.5, op.length)      
         
         
 

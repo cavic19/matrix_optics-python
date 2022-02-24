@@ -4,25 +4,21 @@ from matrixopt.helper import count_matching
 class GaussianBeam:
     """Gaussain beam in z direction. Not mutable."""
     
-    __NOT_SIMULTANOUS_KWARGS = ["q", "W0", "z0", "z_waist", "divergence"]
+    __NOT_SIMULTANOUS_KWARGS = ["W0", "z0", "z_waist", "divergence"] #TODO: Rozmysli si q parameter! Nezapomen ze ten je vazany na z souradnici!
     __DEFAULT_REFRACTIVE_INDEX = 1
-    def __init__(self, amplitude, **kwargs) -> None:
-        self.amplitude = amplitude  
-        if count_matching(kwargs.keys(), lambda key: key in self.__NOT_SIMULTANOUS_KWARGS) != 2:
-            raise ValueError(f"Just 2 of the key arguments {', '.join(self.__NOT_SIMULTANOUS_KWARGS)} can be provided.")       
+    def __init__(self, amplitude, wavelength, **kwargs) -> None:
+        self.amplitude = amplitude
+        self.wavelength = wavelength  
+        if count_matching(kwargs.keys(), lambda key: key in self.__NOT_SIMULTANOUS_KWARGS) < 2:
+            raise ValueError(f"At least 2 of the {', '.join(self.__NOT_SIMULTANOUS_KWARGS)} arguments must be provided.")       
         self.__n = self.__get_kwarg_if_present(kwargs, "n", self.__DEFAULT_REFRACTIVE_INDEX)     
-        self.__args = {k: kwargs[k] for k in kwargs if k in self.__NOT_SIMULTANOUS_KWARGS}
+        self.__args = {k: kwargs[k] for k in [k for k in kwargs if k in self.__NOT_SIMULTANOUS_KWARGS][:2]} #Takes only first 2 args from NOT_SIMULTANOUS_KWARGS
 
     def __get_kwarg_if_present(self, kwargs: dict, kw: str, otherwise) -> Any:
         if kw in kwargs:
             return kwargs[kw]
         return otherwise
 
-    @property
-    def q(self):
-        if "q" in self.__args:
-            return self.__args["q"]
-        assert False, "Not implemented"
 
     @property
     def W0(self):
@@ -55,4 +51,7 @@ class GaussianBeam:
         assert False, "Not implemented"
     
     def xi(self, z: float) -> float:
+        assert False, "Not implemented"
+    
+    def q(self, z: float) -> complex:
         assert False, "Not implemented"
