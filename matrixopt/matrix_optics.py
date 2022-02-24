@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import numpy as np
 from functools import reduce
 
@@ -63,11 +62,3 @@ class OpticalPath:
         system_matrix = reduce(lambda c, b: c.dot(b), [e.matrix for e in reversed(self.elements)])
         return ABCDElement(system_matrix)
 
-
-
-
-
-if __name__ == "__main__":
-    list = [1,1,1]
-    t = reduce(lambda x, y: x + y, list)
-    print(str(t))

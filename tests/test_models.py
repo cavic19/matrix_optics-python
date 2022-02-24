@@ -1,5 +1,5 @@
 import unittest
-from models import *
+from matrixopt.models import *
 
 
 class TestGaussianBeam(unittest.TestCase):
@@ -8,7 +8,8 @@ class TestGaussianBeam(unittest.TestCase):
         "W0": 0.001,
         "z0": 0.123,
         "divergence": 10,
-        "z_waist": 5
+        "z_waist": 5,
+        "n": 1
         }
 
     def test_initializer_success(self):

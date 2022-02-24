@@ -1,5 +1,5 @@
 from typing import Any
-from helper import count_matching
+from matrixopt.helper import count_matching
 
 class GaussianBeam:
     """Gaussain beam in z direction. Not mutable."""

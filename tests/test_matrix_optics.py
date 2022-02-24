@@ -2,7 +2,7 @@ import unittest
 import cmath
 from cv2 import exp
 import numpy as np
-from matrix_optics import ABCDElement, FreeSpace, OpticalPath
+from matrixopt.matrix_optics import ABCDElement, FreeSpace, OpticalPath
 
 class TestABCDElement(unittest.TestCase):
     A = 1

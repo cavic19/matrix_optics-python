@@ -1,5 +1,5 @@
 import unittest
-from helper import *
+from matrixopt.helper import *
 
 
 class TestCountMatching(unittest.TestCase):
