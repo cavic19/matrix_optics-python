@@ -61,4 +61,8 @@ class OpticalPath:
     def __build_system(self) -> ABCDElement:
         system_matrix = reduce(lambda c, b: c.dot(b), [e.matrix for e in reversed(self.elements)])
         return ABCDElement(system_matrix)
-
+    
+    #TODO: test this
+    @property
+    def length(self):
+        return reduce(lambda a, b: a +b , [e.d for e in self.elements if isinstance(e, FreeSpace)])
