@@ -59,7 +59,7 @@ class GaussianBeam:
         return self.waist_radius * sqrt(1 + ((z - self._waist_location) / self.rayleigh_range)**2)
 
     def curviture(self, z) -> float:
-        return (z - self._waist_location) * (1 + (self.rayleigh_range / (z - self._waist_location)))
+        return (z - self._waist_location) * (1 + (self.rayleigh_range / (z - self._waist_location))**2)
 
     def cbeam_parameter(self, z) -> complex:
         return complex(z- self._waist_location, self.rayleigh_range)
