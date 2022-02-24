@@ -1,15 +1,16 @@
 import unittest
-from matrixopt.models import *
+from matrixopt.beams import *
 
 
 class TestGaussianBeam(unittest.TestCase):
     TEST_VALUES = {
+        "amplitude": 1,
         "q": complex(121,589),
         "W0": 0.001,
         "z0": 0.123,
         "divergence": 10,
         "z_waist": 5,
-        "n": 1
+        "n": 1,
         }
 
     def test_initializer_success(self):
