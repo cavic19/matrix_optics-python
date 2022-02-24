@@ -45,8 +45,8 @@ class ThinLens(ABCDElement):
 
 class OpticalPath:
     """Represents optical path that is created in init function."""
-    elements: list[ABCDElement] = []
     def __init__(self, *elements: list[ABCDElement]) -> None:
+        self.elements = []
         for el in elements:
             if isinstance(el, (int, float)):
                 self.elements.append(FreeSpace(el))
