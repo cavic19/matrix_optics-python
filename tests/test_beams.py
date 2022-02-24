@@ -9,7 +9,7 @@ class TestGaussianBeam(unittest.TestCase):
     DIVERGENCE_TEST_VAL = 0.10743e-3 #0.10743mrad
     Z_WAIST_TEST_VAL = 0
 
-    REFR_INDEX_TEST_VAL = 1
+    REFR_INDEX_TEST_VAL = 1.2
     WAVELNEGTH_TEST_VAL = 405e-9 #405nm
 
     def test_init_no_beam_param_fail(s):

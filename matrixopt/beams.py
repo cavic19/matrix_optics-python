@@ -7,9 +7,16 @@ class GaussianBeam:
     def __init__(self, 
                 wave_length, 
                 amplitude = 1, 
-                refractive_index = 1, 
+                refractive_index = 1,
                 waist_location = 0, 
                 **beam_param) -> None:
+        """
+        Args:
+            beam_param: Specifiy one of the following parameters: waist radius ("w0"), rayleigh range ("zr"), divergence ("div")
+
+        Raises:
+            ValueError: When no or more then 1 beam_param is presented.
+        """
         self._wavelength = wave_length
         self._amplitude = amplitude
         self._refractive_index = refractive_index
@@ -49,10 +56,10 @@ class GaussianBeam:
         return self._refractive_index
 
     def beam_radius(self, z) -> float:
-        assert False, "Not impemented"
+        return self.waist_radius * sqrt(1 + ((z - self._waist_location) / self.rayleigh_range)**2)
 
     def curviture(self, z) -> float:
-        assert False, "Not impemented"
+        return (z - self._waist_location) * (1 + (self.rayleigh_range / (z - self._waist_location)))
 
     def cbeam_parameter(self, z) -> complex:
-        assert False, "Not impemented"
+        return complex(z- self._waist_location, self.rayleigh_range)
