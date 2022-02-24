@@ -1,57 +1,58 @@
-from typing import Any
-from matrixopt.helper import count_matching
+from collections import namedtuple
+from math import pi, sqrt
 
 class GaussianBeam:
-    """Gaussain beam in z direction. Not mutable."""
-    
-    __NOT_SIMULTANOUS_KWARGS = ["W0", "z0", "z_waist", "divergence"] #TODO: Rozmysli si q parameter! Nezapomen ze ten je vazany na z souradnici!
-    __DEFAULT_REFRACTIVE_INDEX = 1
-    def __init__(self, amplitude, wavelength, **kwargs) -> None:
-        self.amplitude = amplitude
-        self.wavelength = wavelength  
-        if count_matching(kwargs.keys(), lambda key: key in self.__NOT_SIMULTANOUS_KWARGS) < 2:
-            raise ValueError(f"At least 2 of the {', '.join(self.__NOT_SIMULTANOUS_KWARGS)} arguments must be provided.")       
-        self.__n = self.__get_kwarg_if_present(kwargs, "n", self.__DEFAULT_REFRACTIVE_INDEX)     
-        self.__args = {k: kwargs[k] for k in [k for k in kwargs if k in self.__NOT_SIMULTANOUS_KWARGS][:2]} #Takes only first 2 args from NOT_SIMULTANOUS_KWARGS
+    _SUPPORTED_KWARGS = ["w0", "zr", "div"] #waist radius, rayleigh range, divergence
 
-    def __get_kwarg_if_present(self, kwargs: dict, kw: str, otherwise) -> Any:
-        if kw in kwargs:
-            return kwargs[kw]
-        return otherwise
-
-
-    @property
-    def W0(self):
-        if "W0" in self.__args:
-            return self.__args["W0"]
-        assert False, "Not implemented"
-
-    @property
-    def z0(self):
-        if "z0" in self.__args:
-            return self.__args["z0"]
-        assert False, "Not implemented"
+    def __init__(self, 
+                wave_length, 
+                amplitude = 1, 
+                refractive_index = 1, 
+                waist_location = 0, 
+                **beam_param) -> None:
+        self._wavelength = wave_length
+        self._amplitude = amplitude
+        self._refractive_index = refractive_index
+        self._waist_location = waist_location
+        if len(beam_param) != 1 or not list(beam_param)[0] in self._SUPPORTED_KWARGS:
+            raise ValueError(f"One of {', '.join(self._SUPPORTED_KWARGS)} arguments must be presented!")    
         
-    @property
-    def z_waist(self):
-        if "z_waist" in self.__args:
-            return self.__args["z_waist"]
-        assert False, "Not implemented"
-    
+        BeamParam = namedtuple("BeamParam", "name value")
+        self.__beam_param = BeamParam(list(beam_param)[0], beam_param[list(beam_param)[0]])
+
+
     @property
     def divergence(self):
-        if "divergence" in self.__args:
-            return self.__args["divergence"]
-        assert False, "Not implemented"
+        if "div" == self.__beam_param.name:
+            return self.__beam_param.value
+        return self.wavelength / (pi * self.waist_radius * self.refractive_index)
 
-    def W(self, z: float) -> float:
-        assert False, "Not implemented"
 
-    def R(self, z: float) -> float:
-        assert False, "Not implemented"
+    @property
+    def waist_radius(self): 
+        if "w0" == self.__beam_param.name:
+            return self.__beam_param.value
+        return sqrt((self.wavelength * self.rayleigh_range) / (pi * self.refractive_index))
+
+    @property
+    def rayleigh_range(self):
+        if "zr" == self.__beam_param.name:
+            return self.__beam_param.value
+        return self.wavelength / (pi * self.refractive_index * self.divergence**2)
+
+    @property
+    def wavelength(self):
+        return self._wavelength
     
-    def xi(self, z: float) -> float:
-        assert False, "Not implemented"
-    
-    def q(self, z: float) -> complex:
-        assert False, "Not implemented"
+    @property
+    def refractive_index(self):
+        return self._refractive_index
+
+    def beam_radius(self, z) -> float:
+        assert False, "Not impemented"
+
+    def curviture(self, z) -> float:
+        assert False, "Not impemented"
+
+    def cbeam_parameter(self, z) -> complex:
+        assert False, "Not impemented"
