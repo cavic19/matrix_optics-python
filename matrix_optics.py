@@ -5,6 +5,7 @@ from functools import reduce
 
 class ABCDElement:
     def __init__(self, *args) -> None:
+        """Accepts A, B, C, D matrix elements or a matrix itself"""
         if len(args) == 4:
             self._A = args[0]
             self._B = args[1]
