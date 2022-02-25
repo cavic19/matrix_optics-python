@@ -1,8 +1,10 @@
+from ctypes import Union
 import numpy as np
 from functools import reduce
-
+from matrixopt.beams import GaussianBeam
 
 class ABCDElement:
+    length = 0
     def __init__(self, *args) -> None:
         """Accepts A, B, C, D matrix elements or a matrix itself"""
         if len(args) == 4:
@@ -32,9 +34,10 @@ class ABCDElement:
 
 
 class FreeSpace(ABCDElement):
-    def __init__(self, d: float) -> None:
-        self.d = d
-        super().__init__(1, d, 0, 1)
+    def __init__(self, d: float, refr_index: float = 1) -> None:
+        self.length = d
+        self.n = refr_index
+        super().__init__(1, d / refr_index, 0, 1)
   
 
 class ThinLens(ABCDElement):
@@ -46,17 +49,13 @@ class ThinLens(ABCDElement):
 class OpticalPath:
     """Represents optical path that is created in init function."""
     def __init__(self, *elements: list[ABCDElement]) -> None:
-        self.elements = []
-        for el in elements:
-            if isinstance(el, (int, float)):
-                self.elements.append(FreeSpace(el))
-            else:
-                self.elements.append(el)
+        self.elements = list(elements)
 
-    def propagate(self, q_in: complex) -> complex:
+    def propagate(self, input: GaussianBeam) -> GaussianBeam:
+        q_in = input.cbeam_parameter(0)
         system = self.__build_system()
-        return system.act(q_in)
-
+        q_out = system.act(q_in)
+        return GaussianBeam.from_q(input.wavelength, q_out, self.length, input.refractive_index, input.amplitude)
 
     def __build_system(self) -> ABCDElement:
         system_matrix = reduce(lambda c, b: c.dot(b), [e.matrix for e in reversed(self.elements)])
@@ -64,4 +63,5 @@ class OpticalPath:
     
     @property
     def length(self):
-        return reduce(lambda a, b: a +b , [e.d for e in self.elements if isinstance(e, FreeSpace)])
+        return reduce(lambda a, b: a +b , [e.length for e in self.elements])
+

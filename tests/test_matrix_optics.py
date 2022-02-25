@@ -44,47 +44,56 @@ class TestThinLens(unittest.TestCase):
 
 class TestOpticalPath(unittest.TestCase):
     def test_propagate(self):
-        A = np.array([[0, 1], [2, 3]])
-        B = np.array([[4, 5], [6, 7]])
-        C = np.array([[8, 9], [8, 7]])
+        # Arrange
+        A_el = ABCDElement(np.array([[0, 1], [2, 3]]))
+        B_el = ABCDElement(np.array([[4, 5], [6, 7]]))
+        C_el = ABCDElement(np.array([[8, 9], [8, 7]]))
         q_in = complex(3, 5)
+        gauss_in = GaussianBeam.from_q(1, q_in, 0)
         # Vypočteno ručně
-        expected = complex(1_803_075/1_557_725, -320/1_557_725)
+        expected_q = GaussianBeam.from_q(1, complex(1_803_075/1_557_725, -320/1_557_725), 0).cbeam_parameter(0)
 
-        A_el = ABCDElement(A)
-        B_el = ABCDElement(B)
-        C_el = ABCDElement(C)
-
+        # Act
         op = OpticalPath(A_el, B_el, C_el)
+        actual_q = op.propagate(gauss_in).cbeam_parameter(op.length)
         
-        actual = op.propagate(q_in)
-        self.assertAlmostEqual(expected, actual, places=3)
+        # Assert
+        self.assertAlmostEqual(actual_q, expected_q, places=3)
 
-    def test_init_number(self):
+    def test_propagate_in_free_space(self):
+        # Arrange
+        q_in = complex(3, 5)
+        gauss_in = GaussianBeam.from_q(1,  q_in, 0)
         d1 = 5
         d2 = 7
-        q_in = complex(3, 5)
-        expected = q_in + d1 +d2
-        op = OpticalPath(d1, d2)
-        actual = op.propagate(q_in)
-        self.assertEquals(actual, expected)
+        expected_q = complex(3, 5) + d1 + d2 #Freespace only adds constant real numbers
+
+        # Act
+        op = OpticalPath(FreeSpace(d1), FreeSpace(d2))
+        actual_q= op.propagate(gauss_in).cbeam_parameter(op.length) #Checking complex beam parameter in a op.length distance
+
+        # Assert
+        self.assertEquals(actual_q, expected_q)
 
     def test_init_number_ABCDElement(self):
-        d = 5
-        A = np.array([[1, 2], [3, 4]])
-        A_el = ABCDElement(A)
+        # Arrange
+        fs = FreeSpace(5)
+        A_el = ABCDElement(np.array([[1, 2], [3, 4]]))
+        gauss_in = GaussianBeam.from_q(1, complex(3, 5), 0)
+        expected_q = complex(355/1009, -10/1009)
 
-        q_in = complex(3, 5)
-        expected = complex(355/1009, -10/1009)
-        op = OpticalPath(d, A_el)
-        actual = op.propagate(q_in)
-        self.assertAlmostEqual(expected, actual, places=3)
+        # Act
+        op = OpticalPath(fs, A_el)
+        actual_q = op.propagate(gauss_in).cbeam_parameter(op.length)
+
+        # Assert
+        self.assertAlmostEqual(actual_q, expected_q, places=3)
 
     def test_length(self):
-        op = OpticalPath(5, 10, 1.3, 0.001)
-        self.assertAlmostEquals(16.301, op.length,5)
+        op = OpticalPath(FreeSpace(5), FreeSpace(10), FreeSpace(1.3), FreeSpace(0.001))
+        self.assertAlmostEquals(16.301, op.length, 5)
 
-        op = OpticalPath(1, ThinLens(1), 0.5)
+        op = OpticalPath(FreeSpace(1), ThinLens(1), FreeSpace(0.5))
         self.assertEquals(1.5, op.length)      
         
         
