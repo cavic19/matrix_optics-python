@@ -62,8 +62,8 @@ class GaussianBeam:
         BeamParam = namedtuple("BeamParam", "name value")
         self.__beam_param = BeamParam(list(beam_param)[0], beam_param[list(beam_param)[0]])
 
-    @classmethod
-    def from_q(cls, wave_length, q: complex, z_pos: float, refractive_index=1, amplitude=1) -> GaussianBeam:
+    @staticmethod
+    def from_q(wave_length, q: complex, z_pos: float, refractive_index=1, amplitude=1) -> GaussianBeam:
         """Creates a GaussianBeam instance from complex beam parameter "q".
 
         Args:
@@ -72,7 +72,7 @@ class GaussianBeam:
         """
         waist_location = z_pos - q.real
         rayleigh_range = q.imag
-        return cls(wave_length, amplitude, refractive_index, waist_location, zr=rayleigh_range)
+        return GaussianBeam(wave_length, amplitude, refractive_index, waist_location, zr=rayleigh_range)
 
     def beam_radius(self, z) -> float:
         return self.waist_radius * sqrt(1 + ((z - self._waist_location) / self.rayleigh_range)**2)
