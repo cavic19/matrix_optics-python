@@ -70,3 +70,21 @@ class TestGaussianBeam(unittest.TestCase):
         actual = list(gb.cbeam_parameter(array))
 
         self.assertListEqual(actual, expected)
+
+    def test_str(self):
+        zr = 1
+        w0 = math.sqrt(zr*1/math.pi)
+        div = 1 / (math.pi * w0)
+        gb = GaussianBeam(1, zr=zr)
+
+        expected = f"""
+        amplitude\t=\t1,
+        wavelength\t=\t1000000000 nm,
+        waist_loc\t=\t0 cm,
+        waist_rad\t=\t{w0*10**3} mm,
+        rayleigh_r\t=\t{zr*10**3} mm,
+        divergence\t=\t{div*10**3} mrad
+        """
+        actual = str(gb)
+
+        self.assertMultiLineEqual(actual, expected)
