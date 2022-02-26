@@ -2,7 +2,7 @@ import unittest
 import cmath
 from cv2 import exp
 import numpy as np
-from matrixopt.matrix_optics import *
+from matrixopt.ABCDformalism import *
 
 class TestABCDElement(unittest.TestCase):
     A = 1
