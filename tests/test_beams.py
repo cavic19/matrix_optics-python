@@ -38,3 +38,35 @@ class TestGaussianBeam(unittest.TestCase):
         s.assertAlmostEqual(gb.divergence, s.DIVERGENCE_TEST_VAL, 3)
         s.assertAlmostEqual(gb.waist_radius, s.WAIST_RADIUS_TEST_VAL, 3)
         s.assertAlmostEqual(gb.rayleigh_range, s.RAYLEIGH_RANGE_TEST_VAL, 3)
+
+
+    def test_beam_radius_ndarray(self):
+        zr = 1
+        w0 =  math.sqrt((zr * 1) / (math.pi * 1))
+        gb = GaussianBeam(1, zr=zr)
+        array = np.linspace(0, 10, 100)
+        expected = [w0*math.sqrt(1 + (z/zr)**2) for z in array]
+
+        actual = list(gb.beam_radius(array))
+
+        self.assertListEqual(actual, expected)
+
+    def test_curviture_ndarray(self):
+        zr = 1
+        gb = GaussianBeam(1, zr=zr)
+        array = np.linspace(0.1, 10, 100)
+        expected = [z*(1 + (zr/z)**2) for z in array]
+
+        actual = list(gb.curviture(array))
+
+        self.assertListEqual(actual, expected)
+
+    def test_cbeam_param_ndarray(self):
+        zr = 1
+        gb = GaussianBeam(1, zr=zr)
+        array = np.linspace(0.1, 10, 100)
+        expected = [complex(z, zr) for z in array]
+
+        actual = list(gb.cbeam_parameter(array))
+
+        self.assertListEqual(actual, expected)

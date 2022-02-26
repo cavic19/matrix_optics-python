@@ -1,6 +1,8 @@
 from __future__ import annotations
 from collections import namedtuple
-from math import pi, sqrt
+import math
+import numpy as np
+from typing import Union
 
 
 
@@ -12,20 +14,20 @@ class GaussianBeam:
     def divergence(self):
         if "div" == self.__beam_param.name:
             return self.__beam_param.value
-        return self.wavelength / (pi * self.waist_radius * self.refractive_index)
+        return self.wavelength / (math.pi * self.waist_radius * self.refractive_index)
 
 
     @property
     def waist_radius(self): 
         if "w0" == self.__beam_param.name:
             return self.__beam_param.value
-        return sqrt((self.wavelength * self.rayleigh_range) / (pi * self.refractive_index))
+        return math.sqrt((self.wavelength * self.rayleigh_range) / (math.pi * self.refractive_index))
 
     @property
     def rayleigh_range(self):
         if "zr" == self.__beam_param.name:
             return self.__beam_param.value
-        return self.wavelength / (pi * self.refractive_index * self.divergence**2)
+        return self.wavelength / (math.pi * self.refractive_index * self.divergence**2)
 
     @property
     def wavelength(self):
@@ -74,11 +76,13 @@ class GaussianBeam:
         rayleigh_range = q.imag
         return GaussianBeam(wave_length, amplitude, refractive_index, waist_location, zr=rayleigh_range)
 
-    def beam_radius(self, z) -> float:
-        return self.waist_radius * sqrt(1 + ((z - self._waist_location) / self.rayleigh_range)**2)
+    def beam_radius(self, z: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
+        return self.waist_radius * np.sqrt(1 + ((z - self._waist_location) / self.rayleigh_range)**2)
 
-    def curviture(self, z) -> float:
+    def curviture(self, z: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
         return (z - self._waist_location) * (1 + (self.rayleigh_range / (z - self._waist_location))**2)
 
-    def cbeam_parameter(self, z) -> complex:
+    def cbeam_parameter(self, z: Union[complex, np.ndarray]) -> Union[complex, np.ndarray]:
+        if isinstance(z, np.ndarray):
+            return np.array([self.cbeam_parameter(i) for i in z])
         return complex(z- self._waist_location, self.rayleigh_range)
