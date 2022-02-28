@@ -29,5 +29,5 @@ print(output)
 ```
 ## Installation
 ```
-pip install matrixopt
+pip install optix
 ```
