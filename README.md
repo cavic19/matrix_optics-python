@@ -14,7 +14,7 @@ Library that simplifies matrix optics calculations.
 
 ## Usage
 ```Python
-from matrixopt.ABCDformalism *
+from optix.ABCDformalism *
 
 input = GaussianBeam(wavelength=405e-9, zr=0.01)
 
