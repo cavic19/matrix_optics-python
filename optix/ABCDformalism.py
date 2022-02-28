@@ -1,6 +1,6 @@
 import numpy as np
 from functools import reduce
-from matrixopt.beams import GaussianBeam
+from optix.beams import GaussianBeam
 
 class ABCDElement:
     @property

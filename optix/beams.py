@@ -1,4 +1,5 @@
 from __future__ import annotations
+from abc import ABC, abstractmethod
 from collections import namedtuple
 import math
 import numpy as np

@@ -1,5 +1,5 @@
 import unittest
-from matrixopt.beams import *
+from optix.beams import *
 
 
 class TestGaussianBeam(unittest.TestCase):

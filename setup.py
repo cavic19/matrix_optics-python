@@ -1,14 +1,14 @@
 from setuptools import setup
 setup(
-  name = 'matrixopt',         
-  packages = ['matrixopt'],   
+  name = 'optix',         
+  packages = ['optix'],   
   version = '0.1',      
   license='MIT',        
-  description = 'Matrix optics simplified',   
+  description = 'Optics simplified',   
   author = 'David Tomecek',                  
   author_email = 'david.tomecek1@seznam.cz',     
-  url = 'https://github.com/cavic19/matrixopt',   
-  download_url = 'https://github.com/cavic19/matrixopt/archive/refs/tags/v_01.tar.gz',  
+  url = 'https://github.com/cavic19/optix',   
+  download_url = 'https://github.com/cavic19/optix/archive/refs/tags/v_01.tar.gz',  
   keywords = ['optics', 'geometric optics', 'matrix optics'],   
   install_requires=[           
           'numpy',

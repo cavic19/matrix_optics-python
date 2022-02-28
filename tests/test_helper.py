@@ -1,5 +1,5 @@
 import unittest
-from matrixopt.helper import *
+from optix.helper import *
 
 
 class TestCountMatching(unittest.TestCase):

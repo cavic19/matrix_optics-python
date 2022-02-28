@@ -1,4 +1,4 @@
-# Matrixopt
+# Optix
 Library that simplifies matrix optics calculations.
 
 ## Key features
