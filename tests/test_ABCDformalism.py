@@ -54,7 +54,10 @@ class TestOpticalPath(unittest.TestCase):
         expected_q = GaussianBeam.from_q(1, complex(1_803_075/1_557_725, -320/1_557_725), 0).cbeam_parameter(0)
 
         # Act
-        op = OpticalPath(A_el, B_el, C_el)
+        op = OpticalPath()
+        op.append(A_el)
+        op.append(B_el)
+        op.append(C_el)
         actual_q = op.propagate(gauss_in).cbeam_parameter(op.length)
         
         # Assert
@@ -69,7 +72,8 @@ class TestOpticalPath(unittest.TestCase):
         expected_q = complex(3, 5) + d1 + d2 #Freespace only adds constant real numbers
 
         # Act
-        op = OpticalPath(FreeSpace(d1), FreeSpace(d2))
+        op = OpticalPath(FreeSpace(d1))
+        op.append(FreeSpace(d2))
         actual_q= op.propagate(gauss_in).cbeam_parameter(op.length) #Checking complex beam parameter in a op.length distance
 
         # Assert
@@ -96,6 +100,16 @@ class TestOpticalPath(unittest.TestCase):
         op = OpticalPath(FreeSpace(1), ThinLens(1), FreeSpace(0.5))
         self.assertEquals(1.5, op.length)      
         
+
+    def test_elements_length(self):
+        op = OpticalPath(FreeSpace(5), FreeSpace(10), FreeSpace(1.3))
+        op.append(FreeSpace(1))
+        op.append(FreeSpace(1))
+        expected = 5
+
+        actual = len(op)
+        self.assertEquals(expected, actual)
+
         
 
         
