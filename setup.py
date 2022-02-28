@@ -11,7 +11,7 @@ setup(
   download_url = 'https://github.com/cavic19/optix/archive/refs/tags/v_01.tar.gz',  
   keywords = ['optics', 'geometric optics', 'matrix optics'],   
   install_requires=[           
-          'numpy',
+          'numpy>=21.0.1',
       ],
   classifiers=[
     'Development Status :: 3 - Alpha',      
