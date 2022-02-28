@@ -95,7 +95,7 @@ class RefractionOnSphericalBoundary(ABCDElement):
         ])
 
 
-class ThickLense(ABCDElement):
+class ThickLens(ABCDElement):
     @property
     def length(self) -> float:
         return self._d
