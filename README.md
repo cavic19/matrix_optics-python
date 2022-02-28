@@ -29,5 +29,5 @@ print(output)
 ```
 ## Installation
 ```
-pip install matrixopt==0.1
+pip install matrixopt
 ```
