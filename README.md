@@ -21,7 +21,7 @@ input = GaussianBeam(wavelength=405e-9, zr=0.01)
 op = OpticalPath()
 op.append(FreeSpace(0.1))
 op.append(ThinLens(2.5e-2))
-op.append(ThickLense(0.8, 1.2, 0.4, 0.01))
+op.append(ThickLens(0.8, 1.2, 0.4, 0.01))
 op.append(FreeSpace(1))
 
 output = op.propagate(input)
