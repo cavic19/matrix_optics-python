@@ -27,3 +27,7 @@ op.append(FreeSpace(1))
 output = op.propagate(input)
 print(output)
 ```
+## Installation
+```
+pip install matrixopt==0.1
+```
