@@ -35,7 +35,7 @@ class ABCDElement:
         return nom / denom
 
 
-class PropagationInMedia(ABCDElement):
+class Media(ABCDElement):
     @property
     def length(self) -> float:
         return self._d
@@ -49,7 +49,7 @@ class PropagationInMedia(ABCDElement):
         self._n = n
         super().__init__(1, d / n, 0, 1)
 
-class FreeSpace(PropagationInMedia):
+class FreeSpace(Media):
     def __init__(self, d: float) -> None:
         super().__init__(d, 1)
 
@@ -63,7 +63,7 @@ class ThinLens(ABCDElement):
         super().__init__(1, 0, -1/f, 1)
 
 
-class RefractionOnSphericalBoundary(ABCDElement):
+class SphericalBoundary(ABCDElement):
     @property
     def n1(self):
         return self._n1
@@ -118,9 +118,9 @@ class ThickLens(ABCDElement):
         super().__init__(m)
 
     def __build_matrix(self):
-        first_boundary = RefractionOnSphericalBoundary(1, self._n, self._R1).matrix
-        media = PropagationInMedia(self._d, self._n).matrix
-        second_boundary = RefractionOnSphericalBoundary(self._n, 1, -self._R2).matrix
+        first_boundary = SphericalBoundary(1, self._n, self._R1).matrix
+        media = Media(self._d, self._n).matrix
+        second_boundary = SphericalBoundary(self._n, 1, -self._R2).matrix
         return second_boundary.dot(media.dot(first_boundary))
 
 
