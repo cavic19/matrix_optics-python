@@ -16,14 +16,16 @@ Library that simplifies matrix optics calculations.
 ```Python
 from optix.ABCDformalism *
 
+# Alongside with wavelnegth one aditional parameter needs to be specified. Reyleigh range (zr), divergence (div) or waist radius (w0)
 input = GaussianBeam(wavelength=405e-9, zr=0.01)
 
 op = OpticalPath()
-op.append(FreeSpace(0.1))
-op.append(ThinLens(2.5e-2))
-op.append(ThickLens(0.8, 1.2, 0.4, 0.01))
-op.append(FreeSpace(1))
+op.append(FreeSpace(d=0.1))
+op.append(ThinLens(d=2.5e-2))
+op.append(ThickLens(R1=0.8, n=1.2, R2=0.4, d=0.01))
+op.append(FreeSpace(d=1))
 
+# Outpus gaussian Beam
 output = op.propagate(input)
 print(output)
 ```
