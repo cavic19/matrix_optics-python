@@ -38,8 +38,27 @@ class TestFreeSpace(unittest.TestCase):
         q_out_actual = free_space.act(q_in)
         self.assertEquals(q_out_actual, q_out_expected)
 
-class TestThinLens(unittest.TestCase):
-    pass
+class TestPlanConvexLens(unittest.TestCase):
+    def test_should_equal(self):
+        """Modeling this example: https://dielslab.unm.edu/sites/default/files/lens_and_focusing_solutions.pdf"""
+        n = 2
+        d = 1
+        R = 1
+        expected_A = 1
+        expected_B = 1/2
+        expected_C = -1
+        expected_D = 1/2
+        
+        pcl = PlanoConvexLens(R, d, n)
+        actual_A = pcl._A
+        actual_B = pcl._B
+        actual_C = pcl._C
+        actual_D = pcl._D
+
+        self.assertEquals(actual_A, expected_A)
+        self.assertEquals(actual_B, expected_B)
+        self.assertEquals(actual_C, expected_C)
+        self.assertEquals(actual_D, expected_D)
 
 
 class TestOpticalPath(unittest.TestCase):
@@ -109,6 +128,22 @@ class TestOpticalPath(unittest.TestCase):
 
         actual = len(op)
         self.assertEquals(expected, actual)
+
+    def test_free_space_thin_lens(self):
+        d = 5
+        f = 12
+        dummy_input = GaussianBeam(405e-9,zr=0.5e-3)
+        test_abcd = ABCDElement(np.array([[1, d], [-1/f , 1 - d/f]]))
+        expected = test_abcd.act(dummy_input.cbeam_parameter(0))
+
+        op = OpticalPath(FreeSpace(d), ThinLens(f))
+        actual = op.propagate(dummy_input).cbeam_parameter(op.length)
+
+        self.assertAlmostEquals(expected, actual)
+
+
+
+    
 
         
 

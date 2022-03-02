@@ -35,25 +35,18 @@ class ABCDElement:
         return nom / denom
 
 
-class Media(ABCDElement):
+class FreeSpace(ABCDElement):
+    """Propagation in free space or in a medium of constant refractive index"""
     @property
     def length(self) -> float:
         return self._d
 
-    @property
-    def n(self) -> float:
-        return self._n
-
-    def __init__(self, d, n) -> None:
+    def __init__(self, d) -> None:
         self._d = d
-        self._n = n
-        super().__init__(1, d / n, 0, 1)
-
-class FreeSpace(Media):
-    def __init__(self, d: float) -> None:
-        super().__init__(d, 1)
+        super().__init__(1, d, 0, 1)
 
 class ThinLens(ABCDElement):
+    """Thin lens aproximation. Only valid if the focal length is much greater than the thickness of the lens"""
     @property
     def f(self):
         return self._f
@@ -63,7 +56,20 @@ class ThinLens(ABCDElement):
         super().__init__(1, 0, -1/f, 1)
 
 
-class SphericalBoundary(ABCDElement):
+class FlatInterface(ABCDElement):
+    """Refraction at a flat interface"""
+    def __init__(self, n1, n2) -> None:
+        """
+
+        Args:
+            n1 (float): Refractive index of first media
+            n2 (float): Refractive index of second media
+        """
+        super().__init__(1, 0, 0, n1 / n2)
+
+
+class CurvedInterface(ABCDElement):
+    """Refraction at a curved interface"""
     @property
     def n1(self):
         return self._n1
@@ -96,6 +102,7 @@ class SphericalBoundary(ABCDElement):
 
 
 class ThickLens(ABCDElement):
+    """Propagation through ThickLens."""
     @property
     def length(self) -> float:
         return self._d
@@ -104,10 +111,10 @@ class ThickLens(ABCDElement):
         """ It is assumed, that the refractive index of free space is 1
 
         Args:
-            R1 (float, positive): Curviture of the first face of the lense
-            n (float): Refractive index of the lense
-            R2 (float, positive): Curviture of the second face of the lense
-            d (float): Thickness of the lense
+            R1 (float, positive): Curviture of the first face of the lens
+            n (float): Refractive index of the lens
+            R2 (float, positive): Curviture of the second face of the lens
+            d (float): Thickness of the lens
         """
         self._n = n
         self._R1 = R1
@@ -118,13 +125,15 @@ class ThickLens(ABCDElement):
         super().__init__(m)
 
     def __build_matrix(self):
-        first_boundary = SphericalBoundary(1, self._n, self._R1).matrix
-        media = Media(self._d, self._n).matrix
-        second_boundary = SphericalBoundary(self._n, 1, -self._R2).matrix
-        return second_boundary.dot(media.dot(first_boundary))
+        first_boundary = CurvedInterface(1, self._n, self._R1).matrix
+        free_space = FreeSpace(self._d).matrix
+        second_boundary = CurvedInterface(self._n, 1, -self._R2).matrix
+        return second_boundary.dot(free_space.dot(first_boundary))
 
 
-
+class PlanoConvexLens(ThickLens):
+    def __init__(self, R, d, n) -> None:
+        super().__init__(float("inf"), n, R, d)
 
 class OpticalPath:
     """Represents optical path that is created in init function."""
