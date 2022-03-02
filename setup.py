@@ -2,7 +2,7 @@ from setuptools import setup
 setup(
   name = 'optix',         
   packages = ['optix'],   
-  version = '0.2',      
+  version = '0.2.1',      
   license='MIT',        
   description = 'Optics simplified',   
   author = 'David Tomecek',                  
