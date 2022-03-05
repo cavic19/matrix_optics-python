@@ -8,7 +8,7 @@ setup(
   author = 'David Tomecek',                  
   author_email = 'david.tomecek1@seznam.cz',     
   url = 'https://github.com/cavic19/optix',   
-  download_url = 'https://github.com/cavic19/optix/archive/refs/tags/v_01.tar.gz',  
+  download_url = 'https://github.com/cavic19/optix/archive/refs/tags/v0.2.1.tar.gz',  
   keywords = ['optics', 'geometric optics', 'matrix optics'],   
   install_requires=[           
           'numpy>=1.19.4',
