@@ -45,7 +45,7 @@ def draw_path(op: OpticalPath, gauss_in: GaussianBeam) -> plt.Figure:
             gauss_temp = op.propagate(gauss_in)
             z = np.linspace(z0, op.length, 100)
             w = gauss_temp.beam_radius(z)
-            ax.plot(z, w)
+            ax.plot(z, w, label=element.name)
             ax.axvline(op.length, linewidth=1, color="black")
             z0 = op.length
     return fig

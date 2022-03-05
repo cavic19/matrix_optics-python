@@ -5,7 +5,8 @@ class ABCDElement:
     def length(self) -> float:
         return 0
 
-    def __init__(self, *args) -> None:
+    def __init__(self, *args, name="") -> None:
+        self.name = name
         """Accepts A, B, C, D matrix elements or a matrix itself"""
         if len(args) == 4:
             self._A = args[0]
@@ -41,7 +42,7 @@ class FreeSpace(ABCDElement):
 
     def __init__(self, d) -> None:
         self._d = d
-        super().__init__(1, d, 0, 1)
+        super().__init__(1, d, 0, 1, name=f"FreeSpace(d={d})")
 
 class ThinLens(ABCDElement):
     """Thin lens aproximation. Only valid if the focal length is much greater than the thickness of the lens"""
@@ -51,7 +52,7 @@ class ThinLens(ABCDElement):
 
     def __init__(self, f: float) -> None:
         self._f = f
-        super().__init__(1, 0, -1/f, 1)
+        super().__init__(1, 0, -1/f, 1, name=f"ThinLens(f={f})")
 
 
 class FlatInterface(ABCDElement):
@@ -63,7 +64,7 @@ class FlatInterface(ABCDElement):
             n1 (float): Refractive index of first media
             n2 (float): Refractive index of second media
         """
-        super().__init__(1, 0, 0, n1 / n2)
+        super().__init__(1, 0, 0, n1 / n2, name=f"FlatInterface(n1={n1}, n2={n2})")
 
 
 class CurvedInterface(ABCDElement):
@@ -90,7 +91,7 @@ class CurvedInterface(ABCDElement):
         self._n1 = n1
         self._n2 = n2
         self._R = R
-        super().__init__(self.__build_matrix())
+        super().__init__(self.__build_matrix(), name=f"CurvedInterface(n1={n1}, n2={n2}, R={R})")
 
     def __build_matrix(self) -> np.ndarray:
         return np.array([
@@ -120,7 +121,7 @@ class ThickLens(ABCDElement):
         self._d = d
 
         m = self.__build_matrix()
-        super().__init__(m)
+        super().__init__(m, name=f"ThickLens(R1={R1}, d={d}, R2={R2}, n={n})")
 
     def __build_matrix(self):
         first_boundary = CurvedInterface(1, self._n, self._R1).matrix
@@ -132,4 +133,5 @@ class ThickLens(ABCDElement):
 class PlanoConvexLens(ThickLens):
     def __init__(self, R, d, n) -> None:
         super().__init__(float("inf"), n, R, d)
+        self.name = f"PlanConvexLens(R={R}, d={d}, n={n})"
 
