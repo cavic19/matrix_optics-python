@@ -131,6 +131,10 @@ class ThickLens(ABCDElement):
 
 
 class PlanoConvexLens(ThickLens):
+    @property
+    def f(self) -> float:
+        return self._R2 / (self._n - 1)
+
     def __init__(self, R, d, n) -> None:
         super().__init__(float("inf"), n, R, d)
         self.name = f"PlanConvexLens(R={R}, d={d}, n={n})"

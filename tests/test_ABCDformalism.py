@@ -81,6 +81,11 @@ class TestPlanConvexLens(unittest.TestCase):
         actual = pcl.name
         self.assertEquals(expected, actual)
 
+    def test_focal_length(self):
+        lens = PlanoConvexLens(R=13.1e-3, n=1.5302, d=11.7e-3)
+        expected = 25.3e-3
+        actual = lens.f
+        self.assertAlmostEquals(expected, actual, 2)
 
     def test_should_equal(self):
         """Modeling this example: https://dielslab.unm.edu/sites/default/files/lens_and_focusing_solutions.pdf"""
