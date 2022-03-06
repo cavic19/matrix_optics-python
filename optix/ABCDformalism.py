@@ -39,8 +39,17 @@ class ABCDElement:
         denom = self._C * q_param + self._D
         return nom / denom
 
+class Media(ABCDElement):
+    @property
+    def length(self) -> float:
+        return self._d
+    def __init__(self, d, n):
+        self._d = d
+        self.n = n
+        super().__init__(1, d, 0, 1, name=f"Media(d={d}, n={n})")
 
-class FreeSpace(ABCDElement):
+
+class FreeSpace(Media):
     """Propagation in free space or in a medium of constant refractive index"""
     @property
     def length(self) -> float:
@@ -48,7 +57,8 @@ class FreeSpace(ABCDElement):
 
     def __init__(self, d) -> None:
         self._d = d
-        super().__init__(1, d, 0, 1, name=f"FreeSpace(d={d})")
+        super().__init__(d=d, n=1)
+        self.name = f"FreeSpace(d={d})"
 
 class ThinLens(ABCDElement):
     """Thin lens aproximation. Only valid if the focal length is much greater than the thickness of the lens"""
@@ -146,7 +156,7 @@ class ThickLens(ABCDCompositeElement):
 
         components = [
             CurvedInterface(1, n, R1),
-            FreeSpace(d),
+            Media(d, n),
             CurvedInterface(n, 1, -R2)
         ]
 

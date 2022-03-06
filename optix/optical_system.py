@@ -1,4 +1,4 @@
-from optix.ABCDformalism import ABCDElement, ABCDCompositeElement
+from optix.ABCDformalism import ABCDElement, ABCDCompositeElement, Media
 from optix.beams import GaussianBeam
 import matplotlib.pyplot as plt
 import numpy as np
@@ -18,7 +18,11 @@ class OpticalPath(ABCDCompositeElement):
         self.__update_matrix()
         q_in = input.cbeam_parameter(0)
         q_out = self.act(q_in)
-        return GaussianBeam.from_q(input.wavelength, q_out, self.length, input.refractive_index, input.amplitude)
+        # If output is in some kind of media, take the refractive index of it 
+        refractive_index = self.childs[-1].n if isinstance(self.childs[-1], Media) else 1
+        # TODO: Not true! Didnt acount for losses due to a reflection and so! (Maybe give ABCDElement rights to alter a GaussianBeam state, so you conform OCP..)
+        amplitude = input.amplitude
+        return GaussianBeam.from_q(wave_length=input.wavelength, q=q_out, z_pos=self.length, refractive_index=refractive_index, amplitude=amplitude)
 
     def __update_matrix(self):
         self.matrix = self._build_matrix()

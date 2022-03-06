@@ -82,7 +82,10 @@ class GaussianBeam:
         return GaussianBeam(wave_length, amplitude, refractive_index, waist_location, zr=rayleigh_range)
 
     def __str__(self) -> str:
-        return f"""
+        warning = ""
+        if self.refractive_index != 1:
+            warning = f"PROPAGATING IN MEDIA OF REFRACTIVE INDEX {self.refractive_index}!\n"
+        return warning + f"""
         amplitude\t=\t{self.amplitude},
         wavelength\t=\t{self.wavelength*10**9} nm,
         waist_loc\t=\t{self.waist_location*10**2} cm,
