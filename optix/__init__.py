@@ -1,2 +1,3 @@
-from optix.ABCDformalism import *
-from optix.beams import *
+import optix.beams
+import optix.ABCDformalism
+import optix.optical_system
