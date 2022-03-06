@@ -1,4 +1,5 @@
 from functools import reduce
+from typing import List
 import numpy as np
 
 class ABCDElement:
@@ -110,7 +111,7 @@ class ABCDCompositeElement(ABCDElement):
     def length(self) -> float:
         return reduce(lambda a, b: a +b , [e.length for e in self.childs])
 
-    def __init__(self, childs: list[ABCDElement], name="") -> None:
+    def __init__(self, childs: List[ABCDElement], name="") -> None:
         self.name = ""
         self.childs = childs
         super().__init__(self._build_matrix(), name=name)
