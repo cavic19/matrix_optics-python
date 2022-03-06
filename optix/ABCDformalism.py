@@ -1,3 +1,4 @@
+from functools import reduce
 import numpy as np
 
 class ABCDElement:
@@ -14,10 +15,7 @@ class ABCDElement:
             self._C = args[2]
             self._D = args[3]
         elif len(args) == 1 and isinstance(args[0], np.ndarray) and self.__is_square_matrix_of_dim(args[0], 2):
-            self._A = args[0][0][0]
-            self._B = args[0][0][1]
-            self._C = args[0][1][0]
-            self._D = args[0][1][1]
+            self.matrix = args[0]
         else:
             raise ValueError("No matrix definition present in init.")
 
@@ -27,6 +25,13 @@ class ABCDElement:
     @property
     def matrix(self) -> np.ndarray:
         return np.array([[self._A, self._B], [self._C, self._D]])
+
+    @matrix.setter
+    def matrix(self, value: np.ndarray):
+        self._A = value[0][0]
+        self._B = value[0][1]
+        self._C = value[1][0]
+        self._D = value[1][1]
     
     def act(self, q_param: complex) -> complex:
         nom = self._A * q_param + self._B
@@ -99,12 +104,30 @@ class CurvedInterface(ABCDElement):
             [-1*(self.n2 - self.n1) / (self.n2 * self.R),   self.n1 / self.n2]
         ])
 
-
-class ThickLens(ABCDElement):
-    """Propagation through ThickLens."""
+class ABCDCompositeElement(ABCDElement):
+    """Represents ABCDelement that consists of child elements"""
     @property
     def length(self) -> float:
-        return self._d
+        return reduce(lambda a, b: a +b , [e.length for e in self.childs])
+
+    def __init__(self, childs: list[ABCDElement], name="") -> None:
+        self.name = ""
+        self.childs = childs
+        super().__init__(self._build_matrix(), name=name)
+
+    def _build_matrix(self) -> np.ndarray:
+        if len(self.childs) == 0:
+            return np.identity(2)
+        return reduce(lambda c, b: c.dot(b), [e.matrix for e in reversed(self.childs)])
+
+class ThickLens(ABCDCompositeElement):
+    """Propagation through ThickLens."""
+    @property
+    def f(self) -> float:
+        # Using Lens Maker's formula
+        # + before 1/R2 is due to assumed positive R2
+        f_inv =  (self._n/1 - 1) * (1/self._R1 + 1/self._R2) 
+        return 1/f_inv
 
     def __init__(self, R1, n, R2, d) -> None:
         """ It is assumed, that the refractive index of free space is 1
@@ -120,21 +143,19 @@ class ThickLens(ABCDElement):
         self._R2 = R2
         self._d = d
 
-        m = self.__build_matrix()
-        super().__init__(m, name=f"ThickLens(R1={R1}, d={d}, R2={R2}, n={n})")
+        components = [
+            CurvedInterface(1, n, R1),
+            FreeSpace(d),
+            CurvedInterface(n, 1, -R2)
+        ]
 
-    def __build_matrix(self):
-        first_boundary = CurvedInterface(1, self._n, self._R1).matrix
-        free_space = FreeSpace(self._d).matrix
-        second_boundary = CurvedInterface(self._n, 1, -self._R2).matrix
-        return second_boundary.dot(free_space.dot(first_boundary))
+        super().__init__(components, name=f"ThickLens(R1={R1}, d={d}, R2={R2}, n={n})")
+
+
+
 
 
 class PlanoConvexLens(ThickLens):
-    @property
-    def f(self) -> float:
-        return self._R2 / (self._n - 1)
-
     def __init__(self, R, d, n) -> None:
         super().__init__(float("inf"), n, R, d)
         self.name = f"PlanConvexLens(R={R}, d={d}, n={n})"

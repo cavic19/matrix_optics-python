@@ -1,37 +1,30 @@
-from optix.ABCDformalism import ABCDElement
+from optix.ABCDformalism import ABCDElement, ABCDCompositeElement
 from optix.beams import GaussianBeam
 from functools import reduce
 import matplotlib.pyplot as plt
 import numpy as np
 
-class OpticalPath:
-    """Represents optical path that is created in init function."""
-    def __init__(self, *elements: list[ABCDElement]) -> None:
-        self._elements = list(elements)
 
-    #TODO: Otestova funkci
+class OpticalPath(ABCDCompositeElement):
+    def __init__(self, *elements: ABCDElement, name="") -> None:
+        super().__init__(list(elements), name=name)
+    
     def append(self, element: ABCDElement) -> None:
-        self._elements.append(element)
+        self.childs.append(element)
 
     def __len__(self) -> int:
-        return len(self._elements)
+        return len(self.childs)
 
     def propagate(self, input: GaussianBeam) -> GaussianBeam:
+        self.__update_matrix()
         q_in = input.cbeam_parameter(0)
-        q_out = self.system.act(q_in)
+        q_out = self.act(q_in)
         return GaussianBeam.from_q(input.wavelength, q_out, self.length, input.refractive_index, input.amplitude)
-    
-    @property
-    def length(self):
-        return reduce(lambda a, b: a +b , [e.length for e in self._elements])
 
-    @property
-    def system(self):
-        return self.__build_system()
+    def __update_matrix(self):
+        self.matrix = self._build_matrix()
 
-    def __build_system(self) -> ABCDElement:
-        system_matrix = reduce(lambda c, b: c.dot(b), [e.matrix for e in reversed(self._elements)])
-        return ABCDElement(system_matrix)
+
 
 def draw_path(op: OpticalPath, gauss_in: GaussianBeam) -> plt.Figure:
     fig, ax = plt.subplots()

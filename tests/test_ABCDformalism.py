@@ -83,8 +83,8 @@ class TestPlanConvexLens(unittest.TestCase):
 
     def test_focal_length(self):
         lens = PlanoConvexLens(R=13.1e-3, n=1.5302, d=11.7e-3)
-        expected = 25.3e-3
-        actual = lens.f
+        expected = 24.7
+        actual = round(lens.f * 10**3, 1)
         self.assertAlmostEquals(expected, actual, 2)
 
     def test_should_equal(self):
