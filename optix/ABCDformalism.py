@@ -167,7 +167,16 @@ class ThickLens(ABCDCompositeElement):
 
 
 class PlanoConvexLens(ThickLens):
-    def __init__(self, R, d, n) -> None:
-        super().__init__(float("inf"), n, R, d)
-        self.name = f"PlanConvexLens(R={R}, d={d}, n={n})"
+    @property
+    def is_inversed(self):
+        return self.__inversed
+    
+    def __init__(self, R, d, n, inversed=False) -> None:
+        if inversed:
+            super().__init__(R, n, float("inf"), d)
+            self.name = f"PlanConvexLens(R={R}, d={d}, n={n})"
+        else:
+            super().__init__(float("inf"), n, R, d)
+            self.name = f"PlanConvexLens(R={R}, d={d}, n={n})"
+        self.__inversed = inversed
 
