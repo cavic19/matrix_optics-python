@@ -1,4 +1,4 @@
-from optix.ABCDformalism import ABCDElement, ABCDCompositeElement, Media
+from optix.matrixopt.ABCDformalism import ABCDElement, ABCDCompositeElement, Media
 from optix.beams import GaussianBeam
 import matplotlib.pyplot as plt
 import numpy as np

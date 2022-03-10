@@ -1,11 +1,42 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
 from collections import namedtuple
 import math
 import numpy as np
-from typing import Union
+from typing import List, Union
 
+def _process_images(positions, data: List[np.ndarray], wave_length, pixel_size, **kwargs) -> GaussianBeam:
+    """Far field aproximation"""
+    amplitudes = []
+    radiuses = []
+    for dataInput in data:
+        ampl, rad = _extract_beam_characteristics(dataInput)
+        amplitudes.append(ampl)
+        radiuses.append(rad * pixel_size)
+    divergence, w_loc = _calculate_div_and_waist_location(positions, radiuses)
+    return GaussianBeam(
+        wave_length=wave_length, 
+        amplitude=kwargs.get("amplitude", 1), 
+        refractive_index=kwargs.get("n",1), 
+        waist_location=w_loc,
+        divergence=divergence)
 
+def _extract_beam_characteristics(data: np.ndarray) -> Union[float, float]:
+    amplitude = np.amax(data)
+    THRESHOLD = int(amplitude / np.e**2)
+    Y_MAX, X_MAX = np.unravel_index(data.argmax(), data.shape)
+    TOLERANCE = 1
+    is_border_point = lambda a: abs(a - THRESHOLD) <= TOLERANCE
+    get_radius = lambda x, y: np.sqrt((X_MAX - x)**2 + (Y_MAX - y)**2)
+    radiuses = []
+    for y in range(len(data)):
+        for x in range(len(data[0])):
+            if is_border_point(data[y][x]):
+                radiuses.append(get_radius(x, y))
+    return amplitude, np.average(radiuses)     
+
+def _calculate_div_and_waist_location(positions, beam_radiuses) -> Union[float, float]:
+    a, b = np.polyfit(positions, beam_radiuses, deg=1)
+    return np.arctan(a), -b/a
 
 
 class GaussianBeam:
@@ -68,6 +99,10 @@ class GaussianBeam:
         
         BeamParam = namedtuple("BeamParam", "name value")
         self.__beam_param = BeamParam(list(beam_param)[0], beam_param[list(beam_param)[0]])
+
+    @staticmethod
+    def from_images(wave_length, positions, pixel_size, data, **kwargs) -> GaussianBeam:
+        return _process_images(positions, data, wave_length, pixel_size, **kwargs)
 
     @staticmethod
     def from_q(wave_length, q: complex, z_pos: float, refractive_index=1, amplitude=1) -> GaussianBeam:

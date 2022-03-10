@@ -1,8 +1,7 @@
 import unittest
-from optix.ABCDformalism import *
+from optix.matrixopt import *
 import numpy as np
 from optix.beams import GaussianBeam
-from optix.optical_system import *
 
 class TestOpticalPath(unittest.TestCase):
     def test_propagate(self):

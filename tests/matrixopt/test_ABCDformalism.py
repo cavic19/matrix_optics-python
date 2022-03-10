@@ -1,9 +1,8 @@
 from ast import Assert
 import unittest
-import cmath
 from cv2 import exp
 import numpy as np
-from optix.ABCDformalism import *
+from optix.matrixopt import *
 
 class TestABCDElement(unittest.TestCase):
     A = 1
