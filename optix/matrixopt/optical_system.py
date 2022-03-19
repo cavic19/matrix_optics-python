@@ -3,6 +3,7 @@ from optix.beams import GaussianBeam
 import matplotlib.pyplot as plt
 import numpy as np
 
+__all__ = ["OpticalPath", "Drawer"]
 
 class OpticalPath(ABCDCompositeElement):
     def __init__(self, *elements: ABCDElement, name="") -> None:

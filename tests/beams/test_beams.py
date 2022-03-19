@@ -1,6 +1,6 @@
 import unittest
 from optix.beams import *
-
+import numpy as np
 
 class TestGaussianBeam(unittest.TestCase):
     AMPLITUDE_TEST_VAL = 1
@@ -42,10 +42,10 @@ class TestGaussianBeam(unittest.TestCase):
 
     def test_beam_radius_ndarray(self):
         zr = 1
-        w0 =  math.sqrt((zr * 1) / (math.pi * 1))
+        w0 =  np.sqrt((zr * 1) / (np.pi * 1))
         gb = GaussianBeam(1, zr=zr)
         array = np.linspace(0, 10, 100)
-        expected = [w0*math.sqrt(1 + (z/zr)**2) for z in array]
+        expected = [w0*np.sqrt(1 + (z/zr)**2) for z in array]
 
         actual = list(gb.beam_radius(array))
 
@@ -73,8 +73,8 @@ class TestGaussianBeam(unittest.TestCase):
 
     def test_str(self):
         zr = 1
-        w0 = math.sqrt(zr*1/math.pi)
-        div = 1 / (math.pi * w0)
+        w0 = np.sqrt(zr*1/np.pi)
+        div = 1 / (np.pi * w0)
         gb = GaussianBeam(1, zr=zr)
 
         expected = f"""
